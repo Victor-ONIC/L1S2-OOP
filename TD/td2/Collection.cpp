@@ -1,9 +1,19 @@
 #include "Collection.h"
 
-// ATTENTION: pour des raisons de simplicité, la capacité par défaut a été abaissée à 5.
-// Il est mentionné dans le sujet de la mettre à 100.
 Collection::Collection() : nb_pts(0), cap(5 /*100*/) {
     T = new Point[cap];
+}
+
+Collection::Collection(Point *Tab, int N) {
+    nb_pts = N;
+    cap = N * 2;
+    // T = Tab; non!
+    T = new Point[cap];
+    // on ourrait utiliser memcpy().
+    // on pourrait utiliser memcpy(T, Tab, sizeof(Point) * N);
+    for (int i = 0; i < N; i++) {
+        T[i] = Tab[i];
+    }
 }
 
 Collection::Collection(const Collection &C) : nb_pts(C.nb_pts), cap(C.cap) {

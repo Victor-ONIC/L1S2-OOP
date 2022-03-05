@@ -17,6 +17,7 @@ public:
 
     // Collection();
     Collection();
+    Collection(Point *T, int N);
     Collection(const Collection &C);
     Collection(Collection &A, Collection &B);
     ~Collection();
