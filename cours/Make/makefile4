@@ -1,0 +1,32 @@
+# les variables
+CC = g++
+CFLAG = -Wall -pedantic
+DEBUG = -g
+
+# optimisation
+# utiliser make OPTIM='oui' pour optimisation
+# ou make OPTIM='oui' -f makefile.4
+
+ifeq ($(OPTIM),oui)
+	MODEOPTIM = -O
+else
+	MODEOPTIM =
+endif
+
+# programme principal
+main : main.cpp matcomp.o complexe.o
+	$(CC) -o main matcomp.o complexe.o main.cpp $(CFLAG) $(DEBUG) $(MODEOPTIM)
+
+# les librairies
+matcomp.o : matcomp.h matcomp.cpp complexe.h
+	$(CC) -c matcomp.cpp $(CFLAG) $(DEBUG) $(MODEOPTIM)
+
+complexe.o : complexe.h complexe.cpp
+	$(CC) -c complexe.cpp $(CFLAG) $(DEBUG) $(MODEOPTIM)
+
+# nettoyage
+clean :
+	rm -f *.o
+
+mrproper : clean
+	rm -f main

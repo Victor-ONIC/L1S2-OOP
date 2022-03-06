@@ -1,0 +1,22 @@
+
+# $@ : nom de la cible (consequent)
+# $< : nom du premier antecedent
+# $^ : liste des antecedents
+
+main : main.o matcomp.o complex.o
+	g++ -o $@ $^
+
+main.o : main.cpp matcomp.h complex.h
+	g++ -c $< 
+
+matcomp.o : matcomp.cpp matcomp.h complex.h
+	g++ -c $<
+
+complex.o : complex.cpp complex.h 
+	g++ -c $<
+
+clean :
+	rm -f *.o
+
+mrproper : clean
+	rm -f main

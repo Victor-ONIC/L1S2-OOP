@@ -1,0 +1,17 @@
+CC = g++
+CFLAG = -Wall -pedantic
+
+main : main.cpp matcomp.o complexe.o
+	$(CC) -o main matcomp.o complexe.o main.cpp $(CFLAG)
+
+matcomp.o : matcomp.h matcomp.cpp complexe.h
+	$(CC) -c matcomp.cpp $(CFLAG)
+
+complexe.o : complexe.h complexe.cpp
+	$(CC) -c complexe.cpp $(CFLAG)
+
+clean :
+	rm -f *.o
+
+mrproper : clean
+	rm -f main
