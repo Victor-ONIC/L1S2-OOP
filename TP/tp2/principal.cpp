@@ -1,4 +1,3 @@
-#include <random>
 #include <cmath>
 #include <chrono>
 
@@ -83,18 +82,24 @@ int main() {
     // q.9
     std::cout << "\n\n--- Derniere question ---\n";
 
-    for (int i = 1; i < 9; i++) {
+    // Calcul du temps de recherche dans une collection initialisée aléatoirement.
+    // de 10 points (10^1) à 100 millions de points (10^8).
+    int puissance_de_10 = 8;
+    for (int i = 1; i <= puissance_de_10; i++) {
         int n = pow(10, i);
+
         std::cout << "\nCreation d'une collection vide.\n";
         col_Points E;
+
         std::cout << "Ajout de " << n << " points dans la collection...\n";
-        E.remplir_zeros(n);
+        E.remplir(n);
         std::cout << "La collection est remplie.\n";
+        E.afficher(1);
         
         auto debut = std::chrono::system_clock::now();
 
         std::cout << "Debut de la recherche...\n";
-        Point test(1.0, 1.0);
+        Point test(-1.0, -1.0);
         if (E.present(test)) {
             std::cout << "Le point est bien present dans la collection.\n";
         }
@@ -104,10 +109,14 @@ int main() {
 
         std::chrono::duration<double, std::milli> temps = std::chrono::system_clock::now() - debut;
         std::cout << "Temps de recherche: " << temps.count() / 1000 << " s" << '\n';
+
+        if (i == 1) {
+            std::cout << "La collection:\n";
+            E.afficher();
+        }
     }
 
-    std::cout << '\n';
-    std::cout << "\nAppuyez sur ENTREE pour finir...\n";
+    std::cout << "\n\nAppuyez sur ENTREE pour finir...\n";
     std::cin.get();
     return 0;
 }

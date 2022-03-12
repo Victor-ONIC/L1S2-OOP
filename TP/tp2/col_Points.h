@@ -2,6 +2,7 @@
 #define _COL_POINTS_H
 
 #include <iostream>
+#include <random>
 #include "Point.h"
 
 class col_Points {
@@ -24,7 +25,7 @@ public:
     void union_col(const col_Points &C);
     void valeurs(Point &centre, Point &loin);
 
-    void remplir_zeros(int n);
+    void remplir(int n);
 
 };
 
