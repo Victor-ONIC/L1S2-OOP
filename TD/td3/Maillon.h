@@ -13,9 +13,10 @@ public:
     Maillon();
     Maillon(int valeur);
     Maillon(int valeur, Maillon *m);
+    ~Maillon();
 
     int get_info();
-    Maillon *get_next();
+    Maillon* get_next();
 
 };
 

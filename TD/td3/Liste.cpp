@@ -2,31 +2,64 @@
 
 Liste::Liste() : head(nullptr) {}
 
+// Liste::Liste(int *T, int N) : head(nullptr) {
+//     if (N == 0) return;
+//     for (int i = 0; i < N; i++) {
+//         ajouter_fin(T[i]);
+//     }
+// }
+
 Liste::Liste(int *T, int N) : head(nullptr) {
-    for (int i = 0; i < N; i++) {
-        ajouter_fin(T[i]);
+    if (N == 0) return;
+    head = new Maillon(T[0]);
+    Maillon *tmp = head;
+    for (int i = 1; i < N; i++) {
+        tmp->next = new Maillon(T[i]);
+        tmp = tmp->next;
+    } 
+}
+
+// Liste::Liste(const Liste &L) : head(nullptr) {
+//     Maillon *p = L.head;
+//     while (p != nullptr) {
+//         ajouter_fin(p->info);
+//         p = p->next;
+//     }
+// }
+
+Liste::Liste(const Liste &L) {
+    if (L.head == nullptr) {
+        head = nullptr;
+        return;
+    }
+    head = new Maillon(L.head->info, nullptr);
+    Maillon *m1 = head, *m2 = L.head->next;
+    while (m2 != nullptr) {
+        m1->next = new Maillon(m2->info, nullptr);
+        m1 = m1->next;
+        m2 = m2->next;
     }
 }
 
-Liste::Liste(const Liste &L) : head(nullptr) {
-    Maillon *p = L.head;
-    while (p != nullptr) {
-        ajouter_fin(p->info);
-        p = p->next;
-    }
-}
+// Liste::~Liste() {
+//     Maillon *actuel = head;
+//     while (actuel != nullptr) {
+//         Maillon *prochain = actuel->next;
+//         delete actuel;
+//         actuel = prochain;
+//     }
+// }
 
 Liste::~Liste() {
-    Maillon *actuel = head;
-    while (actuel != nullptr) {
-        Maillon *prochain = actuel->next;
-        delete actuel;
-        actuel = prochain;
+    Maillon *tmp = nullptr;
+    while (head != nullptr) {
+        tmp = head;
+        head = head->next;
+        delete tmp;
     }
-    head = nullptr;
 }
 
-Maillon *Liste::get_head() { return head; }
+Maillon* Liste::get_head() { return head; }
 
 void Liste::afficher(bool flag) {
     Maillon *p = head;
@@ -50,6 +83,13 @@ void Liste::afficher(bool flag) {
             std::cout << '\n';
         }
     }
+}
+
+void Liste::afficher_rec() { afficher_rec(head); }
+void Liste::afficher_rec(Maillon *m) {
+    if (m == nullptr) return;
+    std::cout << m->info << ' ';
+    afficher_rec(m->next);
 }
 
 void Liste::afficher_inverse(Maillon *m) {
@@ -90,6 +130,10 @@ bool Liste::chercher(int valeur) {
     }
     return false;
 }
+bool Liste::chercher(int valeur) {
+    for (Maillon *m = head; m != nullptr; m = m->next) if (m->info == valeur) return true;
+    return false;
+}
 
 bool Liste::chercher2(int valeur) {
     Maillon *p = head;
@@ -111,42 +155,82 @@ int Liste::nb_occurences(int valeur) {
     return n;
 }
 
+// void Liste::supprimer(int valeur) {
+//     if (head->info == valeur) {
+//         Maillon *temp = head;
+//         head = head->next;
+//         delete temp;
+//         return;
+//     }
+
+//     Maillon *p = head->next, *pre = head;
+//     while (p != nullptr) {
+//         if (p->info == valeur) {
+//             pre->next = p->next;
+//             delete p;
+//             return;
+//         }
+//         pre = p;
+//         p = p->next;
+//     }
+// }
+
 void Liste::supprimer(int valeur) {
-    if (head->info == valeur) {
-        Maillon *temp = head;
-        head = head->next;
-        delete temp;
-        return;
+    Maillon *tmp = head, *pr = nullptr;
+    while(tmp != nullptr && tmp->info != valeur) {
+        pr = tmp;
+        tmp = tmp->next;
     }
-
-    Maillon *p = head->next, *pre = head;
-    while (p != nullptr) {
-        if (p->info == valeur) {
-            pre->next = p->next;
-            delete p;
-            return;
+    if (tmp != nullptr) {
+        if (pr == nullptr) {
+            head = head->next;
         }
-        pre = p;
-        p = p->next;
-    }
-}
-
-void Liste::supprimer_tout(int valeur) {
-    while (head->info == valeur) {
-        Maillon *temp = head;
-        head = head->next;
-        delete temp;
+        else {
+            pr->next = tmp->next;
+        }
+        delete tmp;
     }
     
-    Maillon *p = head->next, *pre = head;
-    while (p != nullptr) {
-        if (p->info == valeur) {
-            pre->next = p->next;
-            delete p;
-            p = pre->next;
-            continue;
+} 
+
+// void Liste::supprimer_tout(int valeur) {
+//     while (head->info == valeur) {
+//         Maillon *temp = head;
+//         head = head->next;
+//         delete temp;
+//     }
+    
+//     Maillon *p = head->next, *pre = head;
+//     while (p != nullptr) {
+//         if (p->info == valeur) {
+//             pre->next = p->next;
+//             delete p;
+//             p = pre->next;
+//             continue;
+//         }
+//         pre = p;
+//         p = p->next;
+//     }
+// }
+
+void Liste::supprimer_tout(int valeur) {
+    Maillon *tmp = head, *pr = nullptr;
+    while (tmp != nullptr) {
+        if (tmp->info == valeur) {
+            if (pr == nullptr) {
+                head = head->next;
+                delete tmp;
+                tmp = head;
+            }
+            else {
+                pr->next = tmp->next;
+                delete tmp;
+                tmp = pr->next;
+            }
         }
-        pre = p;
-        p = p->next;
+        else {
+            pr = tmp;
+            tmp = tmp->next;
+        }
     }
 }

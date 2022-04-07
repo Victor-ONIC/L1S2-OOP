@@ -1,8 +1,6 @@
 #include "Maillon.h"
 #include "Liste.h"
 
-class Maillon;
-
 void afficher_rec(Maillon *P) {
     if (P == nullptr) return;
     std::cout << P->get_info() << ' ';

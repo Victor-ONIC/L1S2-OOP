@@ -2,6 +2,7 @@
 #define _LISTE_H
 
 #include <iostream>
+#include <math.h>
 #include "Maillon.h"
 
 class Maillon;
@@ -19,6 +20,8 @@ public:
     Maillon* get_head();
 
     void afficher(bool flag = false);
+    void afficher_rec();
+    void afficher_rec(Maillon *m);
     void afficher_inverse(Maillon *m);
     void ajouter_fin(int valeur);
     int cardinal();
