@@ -11,6 +11,8 @@ private:
 
     int hauteur(Noeud* n);
     void maximum(Noeud* n, int& max);
+    int inserer(Noeud* n, int info);
+    bool equal(Noeud* n1, Noeud* n2);
 
 public:
     Arbre();
@@ -22,6 +24,8 @@ public:
     int hauteur();
     bool maximum(int& max);
     bool maximum_ordonne(int& max);
+    int inserer(int info);
+    bool equal(Arbre& other);
 };
 
 #endif

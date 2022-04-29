@@ -99,3 +99,73 @@ bool Arbre::maximum_ordonne(int& max)
     }
     return false;
 }
+
+int Arbre::inserer(int info)
+{
+    if (racine == nullptr)
+    {
+        racine = new Noeud(info, nullptr, nullptr);
+        return 1;
+    }
+    else
+    {
+        return inserer(racine, info);
+    }
+}
+
+int Arbre::inserer(Noeud* n, int info)
+{
+    if (info == n->info)
+    {
+        return 0;
+    }
+
+    if (info < n->info)
+    {
+        if (n->fg != nullptr)
+        {
+            inserer(n->fg, info);
+        }
+        else
+        {
+            n->fg = new Noeud(info, nullptr, nullptr);
+            return 1;
+        }
+    }
+    else
+    {
+        if (n->fd != nullptr)
+        {
+            inserer(n->fd, info);
+        }
+        else
+        {
+            n->fd = new Noeud(info, nullptr, nullptr);
+            return 1;
+        }
+    }
+}
+
+bool Arbre::equal(Arbre& other)
+{
+    return equal(racine, other.racine);
+}
+
+bool Arbre::equal(Noeud* n1, Noeud* n2)
+{
+    if (n1 == nullptr && n2 == nullptr)
+    {
+        return true;
+    }
+
+    if (n1 == nullptr || n2 == nullptr)
+    {
+        return false;
+    }
+
+    return n1->info == n2->info &&
+           equal(n1->fg, n2->fg) &&
+           equal(n1->fd, n2->fd);
+}
+
+
