@@ -3,6 +3,8 @@
 /**
  * Classe Noeud
  */
+
+/// Constructeur par défaut.
 Noeud::Noeud()
 {
     m_char = '\0';
@@ -12,6 +14,7 @@ Noeud::Noeud()
     m_fd = NULL;
 }
 
+/// Constructeur avec valeurs.
 Noeud::Noeud(char c, int effectif)
 {
     m_char = c;
@@ -41,7 +44,7 @@ Noeud::Noeud(int effectif, Noeud* fg, Noeud* fd)
     m_fd = fd;
 }
 
-void Noeud::afficher()
+void Noeud::afficher()                                                          //
 {
     char c;
     if (m_char == '\0') c = '#';
@@ -49,6 +52,7 @@ void Noeud::afficher()
     std::cout << "char: " << c << " nb: " << m_effectif << std::endl;
 }
 
+/// Remplir l'attribut 'm_codes' de la classe Arbre en parcourant chaque noeud.
 void Noeud::visiter(const char* T, int taille, std::string* codes)
 {
     char codeg[20] = {0};
@@ -80,12 +84,14 @@ void Noeud::visiter(const char* T, int taille, std::string* codes)
 /**
  * Classe Liste
  */
+
+/// Constructeur par défaut.
 Liste::Liste()
 {
     m_tete = NULL;
 }
 
-void Liste::afficher()
+void Liste::afficher()                                              //
 {
     if (m_tete == NULL) std::cout << "Liste vide.\n";
 
@@ -99,11 +105,14 @@ void Liste::afficher()
     std::cout << std::endl;
 }
 
+/// Obtenir la tete de la liste.
 Noeud* Liste::tete()
 {
     return m_tete;
 }
 
+// q.0
+/// Lire le contenu d'un fichier et le mettre dans un tableau de char.
 char* Liste::readfile(const std::string& filename, int& taille)
 {
     std::ifstream fichier(filename);
@@ -120,6 +129,8 @@ char* Liste::readfile(const std::string& filename, int& taille)
     return s;
 }
 
+// q.1
+/// Ajoute un noeud en début de liste.
 void Liste::inserer_tete(Noeud* n)
 {
     if (m_tete == NULL)
@@ -133,6 +144,8 @@ void Liste::inserer_tete(Noeud* n)
     }
 }
 
+// q.1
+/// Ajoute un noeud en début de liste.
 void Liste::inserer_tete(char c, int effectif)
 {
     if (m_tete == NULL)
@@ -146,6 +159,8 @@ void Liste::inserer_tete(char c, int effectif)
     }
 }
 
+// q.1
+/// Ajoute un noeud à la liste pour chaque caractère présent dans 's'.
 void Liste::inserer_les_caracteres(const char* s, int taille)
 {
     int T[256] = {0};
@@ -164,6 +179,8 @@ void Liste::inserer_les_caracteres(const char* s, int taille)
     }
 }
 
+// q.2
+/// Retire (différent de supprime) le noeud avec le plus petit effectif.
 Noeud* Liste::supprimer_plus_petit()
 {
     if (m_tete == NULL)
@@ -211,11 +228,15 @@ Noeud* Liste::supprimer_plus_petit()
 /**
  * Classe Arbre
  */
+
+/// Constructeur par défaut.
 Arbre::Arbre()
 {
     m_racine = NULL;
 }
 
+// q.4
+/// Constructeur avec nom de fichier.
 Arbre::Arbre(const std::string& filename)
 {
     m_racine = NULL;
@@ -227,14 +248,11 @@ Arbre::Arbre(const std::string& filename)
     if (contenu != NULL)
     {
         L.inserer_les_caracteres(contenu, N);
-
-        L.afficher();
-
         m_racine = construire_arbre(L);
     }
 }
 
-void Arbre::afficher(const std::string& type)
+void Arbre::afficher(const std::string& type)                               //
 {
     if (m_racine == NULL) 
     {
@@ -269,7 +287,7 @@ void Arbre::afficher(const std::string& type)
     }
 }
 
-void Arbre::afficher_noeuds(Noeud* n, int profondeur)
+void Arbre::afficher_noeuds(Noeud* n, int profondeur)                   //
 {
     std::cout << "Noeud: profondeur " << profondeur << " ";
     if (n == NULL) 
@@ -283,11 +301,20 @@ void Arbre::afficher_noeuds(Noeud* n, int profondeur)
     afficher_noeuds(n->m_fd, profondeur + 1);
 }
 
+/// Obtenir la racine de l'arbre.
 Noeud* Arbre::racine()
 {
     return m_racine;
 }
 
+/// Définir la racine de l'arbre.
+void Arbre::set_racine(Noeud* n)
+{
+    m_racine = n;
+}
+
+// q.3
+/// Génère l'arbre de Huffman avec les noeuds de la liste 'L'.
 Noeud* Arbre::construire_arbre(Liste& L)
 {
     while (L.tete()->m_suiv != NULL)
@@ -299,13 +326,13 @@ Noeud* Arbre::construire_arbre(Liste& L)
         Noeud* nouveau = new Noeud(eff, min_2, min_1);
 
         L.inserer_tete(nouveau);
-        std::cout << "Etape suivante:\n";
-        L.afficher();
     }
     Noeud* n = L.tete();
     return n;
 }
 
+// q.5
+/// Remplis l'attribut 'm_codes' en parcourant l'arbre de Huffman.
 void Arbre::codage()
 {
     char code[20] = {0};
@@ -316,6 +343,8 @@ void Arbre::codage()
     }
 }
 
+//q.6
+/// Crée un string contenant le texte codé en binaire.
 std::string* Arbre::codage(const char* s, int N, double& taux_compression)
 {
     std::string* code = new std::string;
@@ -332,9 +361,11 @@ std::string* Arbre::codage(const char* s, int N, double& taux_compression)
     return code;
 }
 
-char* Arbre::compresse(const std::string& texte)
+// q. Question 6 ou q.7
+/// Crée un tableau de char contenant les bits du string 'texte'.
+char* Arbre::compresser(const std::string& texte)
 {
-    char* T = new char[texte.length()]{0};
+    char* T = new char[texte.length() / 8 + 1]{0};
 
     std::bitset<8> ensemble(0);
     
@@ -348,7 +379,6 @@ char* Arbre::compresse(const std::string& texte)
             T[j] = c;
             j++;
 
-            std::cout << ensemble;
             ensemble.reset();
         }
         bool valeur = texte[i] == '1' ? 1 : 0;
@@ -364,10 +394,7 @@ char* Arbre::compresse(const std::string& texte)
         }
         char c = ensemble.to_ulong();
         T[++j] = c;
-
-        std::cout << ensemble;
     }
 
-    std::cout << std::endl;
     return T;
 }
