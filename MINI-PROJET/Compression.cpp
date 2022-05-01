@@ -66,6 +66,20 @@ Noeud::Noeud(int effectif, Noeud* fg, Noeud* fd)
     m_fd = fd;
 }
 
+///  Destructeur.
+Noeud::~Noeud()
+{
+    if (m_fg != NULL)
+    {
+        delete m_fg;
+    }
+
+    if (m_fd != NULL)
+    {
+        delete m_fd;
+    }
+}
+
 ///  Remplir l'attribut 'm_codes' de la classe Arbre en parcourant chaque noeud.
 void Noeud::visiter(const char* T, int taille, std::string* codes)
 {
@@ -297,6 +311,15 @@ Arbre::Arbre()
     m_racine = NULL;
 }
 
+///  Destructeur.
+Arbre::~Arbre()
+{
+    if (m_racine != NULL)
+    {
+        delete m_racine;
+    }
+}
+
 //  q.4
 ///  Constructeur avec un nom de fichier.
 ///  Inutilisée
@@ -317,6 +340,8 @@ Arbre::Arbre(const std::string& filename)
         L.inserer_les_caracteres(contenu, N);
         m_racine = construire_arbre(L);
     }
+
+    delete[] contenu;
 }
 
 ///  Obtenir la racine de l'arbre.

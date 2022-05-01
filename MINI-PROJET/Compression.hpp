@@ -31,6 +31,7 @@ public:
     Noeud(char c, int effectif);
     Noeud(char c, int effectif, Noeud* suivant);
     Noeud(int effectif, Noeud* fg, Noeud* fd);
+    ~Noeud();
 
     void visiter(const char* T, int taille, std::string* codes);
     void ecrire_noeud(std::ofstream& of);
@@ -76,6 +77,7 @@ private:
 public:
     Arbre();
     Arbre(const std::string& filename);                                        //  q.4
+    ~Arbre();
 
     Noeud* racine();
     void set_racine(Noeud* n);

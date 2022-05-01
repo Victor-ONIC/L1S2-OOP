@@ -40,6 +40,8 @@ int main(int argc, char** argv)
         if (contenu == NULL)
         {
             std::cerr << "Compression - Erreur: impossible d'ouvrir le fichier " << input_file << ".\n";
+
+            delete[] contenu;
             return 1;
         }
 
@@ -61,6 +63,10 @@ int main(int argc, char** argv)
         if (sortie.fail())
         {
             std::cerr << "Compression - Erreur: fichier destination introuvable.\n";
+
+            delete[] contenu;
+            delete code;
+            delete[] binary;
             return 1;
         }
 
@@ -69,6 +75,10 @@ int main(int argc, char** argv)
         if (!sortie.good())
         {
             std::cerr << "Compression - Une erreur s'est produite.\n";
+
+            delete[] contenu;
+            delete code;
+            delete[] binary;
             return 1;
         }
 
@@ -77,6 +87,10 @@ int main(int argc, char** argv)
         A.ecrire_arbre(fn);  
 
         std::cout << "Compression - Terminé. Taux: " << a << std::endl; 
+
+        delete[] contenu;
+        delete code;
+        delete[] binary;
         return 0;
     }
 
@@ -113,6 +127,8 @@ int main(int argc, char** argv)
         if (fichier.fail())
         {
             std::cerr << "Compression - Erreur: impossible d'ouvrir le fichier " << input_file << ".\n";
+
+            delete[] s;
             return 1;
         }
 
@@ -133,6 +149,11 @@ int main(int argc, char** argv)
         if (sortie.fail())
         {
             std::cerr << "Compression - Erreur: fichier destination introuvable.\n";
+
+            delete[] s;
+            delete[] binary;
+            delete code;
+            delete original;
             return 1;
         }
 
@@ -141,10 +162,20 @@ int main(int argc, char** argv)
         if (!sortie.good())
         {
             std::cerr << "Compression - Une erreur s'est produite.\n";
+
+            delete[] s;
+            delete[] binary;
+            delete code;
+            delete original;
             return 1;
         }
 
         std::cout << "Compression - Terminé.\n";
+
+        delete[] s;
+        delete[] binary;
+        delete code;
+        delete original;
         return 0;
     }
 
