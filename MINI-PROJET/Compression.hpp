@@ -5,7 +5,7 @@
 #include <cstddef>  // Pour NULL
 #include <fstream>
 #include <string>
-#include <bitset>
+#include <bitset>  // TODO supprimer (6)
 
 /**
  * Classe Noeud
@@ -21,6 +21,7 @@ private:
 
 public:
     Noeud();
+    Noeud(char c);
     Noeud(char c, int effectif);
     Noeud(char c, int effectif, Noeud* suivant);
     Noeud(int effectif, Noeud* fg, Noeud* fd);
@@ -28,6 +29,8 @@ public:
     void afficher();  // TODO supprimer (2)
 
     void visiter(const char* T, int taille, std::string* codes);
+    void ecrire_noeud(std::ofstream& of);
+    void inserer(const std::string& s, size_t& ind);
 
     friend class Liste;
     friend class Arbre;
@@ -47,13 +50,13 @@ public:
 
     void afficher();  // TODO supprimer (3)
 
-    Noeud* tete();
-
-    char* readfile(const std::string& filename, int& taille);
+    const char* readfile(const std::string& filename, int& taille);
     void inserer_tete(Noeud* n);
     void inserer_tete(char c, int effectif);
-    void inserer_les_caracteres(const char* s, int taille);
+    void inserer_les_caracteres(const char* s, int N);
     Noeud* supprimer_plus_petit();
+
+    friend class Arbre;
 };
 
 
@@ -74,11 +77,16 @@ public:
     void afficher_noeuds(Noeud* n, int profondeur);  // (5)
 
     Noeud* racine();
+    void set_racine(Noeud* n);
 
     Noeud* construire_arbre(Liste& L);
     void codage();
-    std::string* codage(const char* s, int N, double& taux_compression);  // TODO string& ??
-    char* compresse(const std::string& texte);  // TODO char* ?? taille du tableau ??
+    const std::string* codage(const char* s, int N, double& taux_compression);  // TODO string& ??
+    const char* compresser(const std::string* texte);  // TODO char* ?? taille du tableau ??
+    void ecrire_arbre(const std::string& filename);
+    void lire(const std::string& s);
+    const std::string* decompresser(const char* texte, int N);
+    const std::string* decodage(const std::string* code);
 };
 
 #endif

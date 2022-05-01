@@ -14,6 +14,16 @@ Noeud::Noeud()
     m_fd = NULL;
 }
 
+/// Constructeur avec un caractère
+Noeud::Noeud(char c)
+{
+    m_char = c;
+    m_effectif = 0;
+    m_suiv = NULL;
+    m_fg = NULL;
+    m_fd = NULL;
+}
+
 /// Constructeur avec valeurs.
 Noeud::Noeud(char c, int effectif)
 {
@@ -80,6 +90,53 @@ void Noeud::visiter(const char* T, int taille, std::string* codes)
     m_fd->visiter(coded, taille + 1, codes);
 }
 
+/// Ajoute le caractère du noeud dans le fichier de sauvegarde de l'arbre.
+void Noeud::ecrire_noeud(std::ofstream& of)
+{
+    char c;
+    if (m_char == '\0')
+    {
+        c = '|';
+    }
+    else
+    {
+        c = m_char;
+    }
+    of << c;
+
+    if (m_fg != NULL)
+    {
+        m_fg->ecrire_noeud(of);
+    }
+
+    if (m_fd != NULL)
+    {
+        m_fd->ecrire_noeud(of);
+    }
+}
+
+/// Crée un noeud avec le string sauvegardé lors de la compression.
+void Noeud::inserer(const std::string& s, size_t& ind)
+{
+    if (ind == s.length())
+    {
+        return;
+    }
+
+    m_char = s[ind];
+
+    if (s[ind] == '|')
+    {
+        m_fg = new Noeud(s[ind + 1]);
+        ind = ind + 1;
+        m_fg->inserer(s, ind);
+
+        m_fd = new Noeud(s[ind + 1]);
+        ind = ind + 1;
+        m_fd->inserer(s, ind);
+    }
+}
+
 
 /**
  * Classe Liste
@@ -105,15 +162,9 @@ void Liste::afficher()                                              //
     std::cout << std::endl;
 }
 
-/// Obtenir la tete de la liste.
-Noeud* Liste::tete()
-{
-    return m_tete;
-}
-
 // q.0
 /// Lire le contenu d'un fichier et le mettre dans un tableau de char.
-char* Liste::readfile(const std::string& filename, int& taille)
+const char* Liste::readfile(const std::string& filename, int& taille)
 {
     std::ifstream fichier(filename);
     if (fichier.fail())
@@ -122,10 +173,11 @@ char* Liste::readfile(const std::string& filename, int& taille)
     }
     fichier.seekg(0, std::ios::end);
     taille = (int)fichier.tellg();
+
     char* s = new char[taille];
     fichier.seekg(0, std::ios::beg);
     fichier.read(s, taille);
-    fichier.close();
+
     return s;
 }
 
@@ -161,11 +213,11 @@ void Liste::inserer_tete(char c, int effectif)
 
 // q.1
 /// Ajoute un noeud à la liste pour chaque caractère présent dans 's'.
-void Liste::inserer_les_caracteres(const char* s, int taille)
+void Liste::inserer_les_caracteres(const char* s, int N)
 {
     int T[256] = {0};
 
-    for (int i = 0; i < taille; i++)
+    for (int i = 0; i < N; i++)
     {
         T[(int)s[i]]++;
     }
@@ -243,7 +295,7 @@ Arbre::Arbre(const std::string& filename)
 
     Liste L;
     int N = 0;
-    char* contenu = L.readfile(filename, N);
+    const char* contenu = L.readfile(filename, N);
 
     if (contenu != NULL)
     {
@@ -317,7 +369,7 @@ void Arbre::set_racine(Noeud* n)
 /// Génère l'arbre de Huffman avec les noeuds de la liste 'L'.
 Noeud* Arbre::construire_arbre(Liste& L)
 {
-    while (L.tete()->m_suiv != NULL)
+    while (L.m_tete->m_suiv != NULL)
     {
         Noeud* min_1 = L.supprimer_plus_petit();
         Noeud* min_2 = L.supprimer_plus_petit();
@@ -327,7 +379,7 @@ Noeud* Arbre::construire_arbre(Liste& L)
 
         L.inserer_tete(nouveau);
     }
-    Noeud* n = L.tete();
+    Noeud* n = L.m_tete;
     return n;
 }
 
@@ -344,8 +396,8 @@ void Arbre::codage()
 }
 
 //q.6
-/// Crée un string contenant le texte codé en binaire.
-std::string* Arbre::codage(const char* s, int N, double& taux_compression)
+/// Crée un string contenant le texte codé.
+const std::string* Arbre::codage(const char* s, int N, double& taux_compression)
 {
     std::string* code = new std::string;
     for (int i = 0; i < N; i++)
@@ -362,39 +414,136 @@ std::string* Arbre::codage(const char* s, int N, double& taux_compression)
 }
 
 // q. Question 6 ou q.7
-/// Crée un tableau de char contenant les bits du string 'texte'.
-char* Arbre::compresser(const std::string& texte)
+/// Crée un tableau de char contenant les 1 et 0 du string 'texte'.
+const char* Arbre::compresser(const std::string* texte)  // TODO finir
 {
-    char* T = new char[texte.length() / 8 + 1]{0};
+    char* T = new char[texte->length() / 8 + 1];
 
-    std::bitset<8> ensemble(0);
-    
-    size_t i = 0;
+    char c = 0;
     int j = 0;
-    for (; i < texte.length(); i++)
+    size_t i = 0;
+    for (; i < texte->length(); i++)
     {
-        if (i != 0 && i % 8 == 0)
+        if (i != 0 && i % 8 == 0)  // Il faut créer un nouveau char.
         {
-            char c = ensemble.to_ulong();
             T[j] = c;
             j++;
-
-            ensemble.reset();
+            c = 0;
         }
-        bool valeur = texte[i] == '1' ? 1 : 0;
-        ensemble[7 - i % 8] = valeur;
+
+        if ((*texte)[i] == '1')
+        {
+            c |= 1 << (7 - (i % 8));
+        }
     }
 
     if (i % 8 != 0)
     {
+        size_t max = 0;
+        int plus_grand_code = -1;
+        for (int i = 0; i < 256; i++)
+        {
+            if (m_codes[i].length() > max)
+            {
+                max = m_codes[i].length();
+                plus_grand_code = i;
+            }
+        }
+
+        std::string val = m_codes[plus_grand_code];
+        int compteur = 0;
         while (i % 8 != 0)
         {
-            ensemble[7 - i % 8] = 0;
+            if (val[compteur] == '1')
+            {
+                c |= 1 << (7 - (i % 8));
+            }
+            compteur++;
             i++;
         }
-        char c = ensemble.to_ulong();
-        T[++j] = c;
+
+        T[j] = c;
     }
 
     return T;
+}
+
+/// Sauvegarde l'arbre en une chaine de caractères dans un fichier.
+void Arbre::ecrire_arbre(const std::string& filename)
+{
+    std::ofstream of(filename);
+    if (m_racine != NULL)
+    {
+        m_racine->ecrire_noeud(of);
+    }
+}
+
+/// Crée un arbre à partir de la chaîne de caractère sauvegardée lors de la compression.
+void Arbre::lire(const std::string& s)
+{
+    m_racine = new Noeud(s[0]);
+
+    size_t ind = 0;
+    m_racine->inserer(s, ind);
+}
+
+/// Transforme le binaire en un texte de '0' et '1'.
+const std::string* Arbre::decompresser(const char* texte, int N)
+{
+    std::string* s = new std::string;
+
+    char c = 0;
+    for (int i = 0; i < N; i++)
+    {
+        c = texte[i];
+        for (int j = 0; j < 8; j++)
+        {
+            int val = (c >> (7 - j)) & 1;
+            if (val == 1)
+            {
+                s->push_back('1');
+            }
+            else
+            {
+                s->push_back('0');
+            }
+        }
+    }
+
+    return s;
+}
+
+// Transforme le string de '0' et de '1' en texte selon l'arbre de Huffmann.
+const std::string* Arbre::decodage(const std::string* code)
+{
+    std::string* s = new std::string;
+
+    Noeud* parcours = m_racine;
+    
+    size_t indice = 0;
+    size_t size = code->length();
+    while (indice != size)  // Tant qu'on est pas arrivé à la fin du texte codé.....
+    {
+        while (parcours->m_fg != NULL && parcours->m_fd != NULL && indice != size)  // Tant qu'on est pas arrivé à une feuille de l'arbre de Huffmann...
+        {
+            if ((*code)[indice] == '0')
+            {
+                parcours = parcours->m_fg;
+                indice++;
+            }
+            else
+            {
+                parcours = parcours->m_fd;
+                indice++;
+            }
+        }
+
+        if (parcours->m_fg == NULL)
+        {
+            s->push_back(parcours->m_char);
+            parcours = m_racine;
+        }
+    }
+
+    return s;
 }

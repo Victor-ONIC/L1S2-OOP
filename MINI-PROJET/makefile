@@ -1,7 +1,7 @@
 CXX = g++
 CFLAG = -Wall -pedantic
-DEBUG = -g
-OPT = 
+DEBUG =
+OPT =
 TARGET = Compression
 
 SOURCES = $(wildcard *.cpp)
@@ -39,3 +39,8 @@ cleanWA:
 	@del /q $(wildcard *.o)
 	@del /q $(TARGET).exe
 	@echo "Removal complete !"
+
+exe:
+	@make --no-print-directory
+	@make --no-print-directory clean 
+	@echo "Build complete !"
