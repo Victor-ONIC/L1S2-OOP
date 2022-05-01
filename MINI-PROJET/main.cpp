@@ -1,17 +1,24 @@
-#include <iostream>
+/**
+ * @file    main.cpp
+ * @author  ONIC Victor (victor.onic@outlook.fr)
+ * @date    01-05-2022
+ * 
+ * Fichier contenant le point d'entrée du programme Compression.
+ */
 
+#include <iostream>
 #include "Compression.hpp"
 
 int main(int argc, char** argv)
 {
-    // Vérification du bon nombre d'arguments.
+    //  Vérification du bon nombre d'arguments.
     if (argc != 4)
     {
         std::cerr << "Compression - Erreur: nombre de paramètres incorrect.\n";
         return 1;
     }
 
-    // Vérification des bons flags.
+    //  Vérification des bons flags (soit -c soit -d).
     std::string flag = argv[1];
     if (flag != "-c" && flag != "-d")
     {
@@ -23,12 +30,12 @@ int main(int argc, char** argv)
     std::string output_file(argv[3]);
 
 
-    // Compression.
+    //  Compression.
     if (flag == "-c")
     {
         Liste L;
         int N = 0;
-        const char* contenu = L.readfile(input_file, N);  // Lire depuis le fichier source.
+        const char* contenu = L.readfile(input_file, N);  //  Lire depuis le fichier source.
 
         if (contenu == NULL)
         {
@@ -36,20 +43,20 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        L.inserer_les_caracteres(contenu, N);  // La liste est prête.
+        L.inserer_les_caracteres(contenu, N);  //  La liste est prête.
 
         Arbre A;
         Noeud* r = A.construire_arbre(L);
-        A.set_racine(r);  // L'arbre est prêt.
+        A.set_racine(r);
 
-        A.codage();  // Initialisation des codes de chaque caractères.
+        A.codage();  //  Création des codes de chaque caractères ("0101" par exemple).
         
         double a = 0;
-        const std::string* code = A.codage(contenu, N, a);  // Texte codé "1011010110" par exemple.
+        const std::string* code = A.codage(contenu, N, a);  //  Passage en texte codé.
 
-        const char* binary = A.compresser(code);  // Texte binaire.
+        const char* binary = A.compresser(code);  //  Passage en binaire.
 
-        // Ecrire dans le fichier destination.
+        //  Ecrire dans le fichier destination.
         std::ofstream sortie(output_file);
         if (sortie.fail())
         {
@@ -65,7 +72,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        // Ecrire l'arbre dans un fichier afin de s'en servir plus tard pour décompresser.
+        //  Ecrire l'arbre dans un fichier afin de s'en servir plus tard pour décompresser.
         std::string fn = output_file.append(".arbre");
         A.ecrire_arbre(fn);  
 
@@ -74,12 +81,13 @@ int main(int argc, char** argv)
     }
 
 
-    // Décompression.
+    //  Décompression.
     if (flag == "-d")
     {
-        // Lire le fichier contenant l'arbre de Huffmann.
+        //  Lire le fichier contenant l'arbre utilisé pour la compression.
         std::string fn = input_file;
         fn.append(".arbre");
+
         std::ifstream fichier_arbre(fn);
         if (fichier_arbre.fail())
         {
@@ -98,9 +106,9 @@ int main(int argc, char** argv)
         
         Arbre A;
         A.lire(arbre);
-        A.codage();  // L'arbre de Huffmann prêt.
+        A.codage();  //  L'arbre de Huffmann est prêt.
 
-        // Lire le fichier source compressé.
+        //  Lire le fichier source compressé.
         std::ifstream fichier(input_file);
         if (fichier.fail())
         {
@@ -116,11 +124,11 @@ int main(int argc, char** argv)
         fichier.read(binary, taille2);
         fichier.close();
 
-        const std::string* code = A.decompresser(binary, taille2);  // Texte codé "00101011" par exemple.
+        const std::string* code = A.decompresser(binary, taille2);  //  Passage en texte codé (01011011010 par exemple).
 
-        const std::string* original = A.decodage(code);  // Texte original.
+        const std::string* original = A.decodage(code);  //  Texte original.
 
-        // Ecrire le texte dans le fichier destination.
+        //  Ecrire dans le fichier destination.
         std::ofstream sortie(output_file);
         if (sortie.fail())
         {
@@ -144,6 +152,3 @@ int main(int argc, char** argv)
     std::cerr << "Compression - Erreur inconnue.\n";
     return 2;
 }
-
-// TODO préciser partout quand est-ce que j'ai dû respecter le sujet.
-

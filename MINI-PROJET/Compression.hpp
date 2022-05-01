@@ -1,14 +1,20 @@
+/**
+ * @file    Compression.hpp
+ * @author  ONIC Victor (victor.onic@outlook.fr)
+ * @date    01-05-2022
+ * 
+ * Fichier header de Compression.cpp.
+ */
+
 #ifndef COMPRESSION_H
 #define COMPRESSION_H
 
-#include <iostream>  // TODO supprimer (1)
-#include <cstddef>  // Pour NULL
+#include <cstddef>
 #include <fstream>
 #include <string>
-#include <bitset>  // TODO supprimer (6)
 
 /**
- * Classe Noeud
+ *  Classe Noeud
  */
 class Noeud
 {
@@ -26,8 +32,6 @@ public:
     Noeud(char c, int effectif, Noeud* suivant);
     Noeud(int effectif, Noeud* fg, Noeud* fd);
 
-    void afficher();  // TODO supprimer (2)
-
     void visiter(const char* T, int taille, std::string* codes);
     void ecrire_noeud(std::ofstream& of);
     void inserer(const std::string& s, size_t& ind);
@@ -37,8 +41,9 @@ public:
 };
 
 
+
 /**
- * Classe Liste
+ *  Classe Liste
  */
 class Liste
 {
@@ -48,20 +53,19 @@ private:
 public:
     Liste();
 
-    void afficher();  // TODO supprimer (3)
-
-    const char* readfile(const std::string& filename, int& taille);
-    void inserer_tete(Noeud* n);
-    void inserer_tete(char c, int effectif);
-    void inserer_les_caracteres(const char* s, int N);
-    Noeud* supprimer_plus_petit();
+    const char* readfile(const std::string& filename, int& taille);            //  q.0
+    void inserer_tete(Noeud* n);                                               //  q.1
+    void inserer_tete(char c, int effectif);                                   //  q.1
+    void inserer_les_caracteres(const char* s, int N);                         //  q.1
+    Noeud* supprimer_plus_petit();                                             //  q.2
 
     friend class Arbre;
 };
 
 
+
 /**
- * Classe Arbre
+ *  Classe Arbre
  */
 class Arbre
 {
@@ -71,18 +75,15 @@ private:
 
 public:
     Arbre();
-    Arbre(const std::string& filename);
-
-    void afficher(const std::string& type = "");  // TODO supprimer (4)
-    void afficher_noeuds(Noeud* n, int profondeur);  // (5)
+    Arbre(const std::string& filename);                                        //  q.4
 
     Noeud* racine();
     void set_racine(Noeud* n);
 
-    Noeud* construire_arbre(Liste& L);
-    void codage();
-    const std::string* codage(const char* s, int N, double& taux_compression);  // TODO string& ??
-    const char* compresser(const std::string* texte);  // TODO char* ?? taille du tableau ??
+    Noeud* construire_arbre(Liste& L);                                         //  q.3
+    void codage();                                                             //  q.5
+    const std::string* codage(const char* s, int N, double& taux_compression); //  q.6
+    const char* compresser(const std::string* texte);                          //  q. Question 6 ou q.7
     void ecrire_arbre(const std::string& filename);
     void lire(const std::string& s);
     const std::string* decompresser(const char* texte, int N);
