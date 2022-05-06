@@ -6,6 +6,11 @@ Arbre::Arbre() : racine(nullptr)
 Arbre::Arbre(Noeud* p) : racine(p) 
 { }
 
+Arbre::Arbre(const Arbre& other)
+{
+    racine = copie(other.racine);
+}
+
 Arbre::~Arbre()
 {
     if (racine != nullptr)
@@ -168,4 +173,31 @@ bool Arbre::equal(Noeud* n1, Noeud* n2)
            equal(n1->fd, n2->fd);
 }
 
+Noeud* Arbre::copie(Noeud* n)
+{
+    if (n == nullptr) return nullptr;
+    return new Noeud(n->info, copie(n->fg), copie(n->fd));
+}
 
+Noeud* Arbre::arbre_miroir(const Arbre& other)
+{
+    racine = arbre_miroir(other.racine);
+}
+
+Noeud* Arbre::arbre_miroir(Noeud* n)
+{
+    if (n == nullptr) return nullptr;
+    new Noeud(n->info, arbre_miroir(n->fd), arbre_miroir(n->fg));
+}
+
+bool Arbre::sous_arbre(const Arbre& other)
+{
+    return sous_arbre(racine, other.racine);
+}
+
+bool Arbre::sous_arbre(Noeud* n1, Noeud* n2)
+{
+    if (equal(n1, n2)) return true;
+    if (n2 != nullptr) return sous_arbre(n1, n2->fg) || sous_arbre(n1, n2->fd);
+    return false;
+}
