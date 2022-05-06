@@ -178,8 +178,6 @@ Liste::Liste()
 
 //  q.0
 ///  Lire le contenu d'un fichier et le mettre dans un tableau de char.
-///
-///  Il est mentionné dans le sujet que cette fonction renvoie un char*...      // TODO quesstion
 const char* Liste::readfile(const std::string& filename, int& taille)
 {
     //  Création d'un objet de type ifstream (input file stream).
@@ -323,10 +321,6 @@ Arbre::~Arbre()
 //  q.4
 ///  Constructeur avec un nom de fichier.
 ///  Inutilisée
-///
-///  Cette fonction est demandée par le sujet mais je trouve qu'elle                     // TODO question
-///  n'est pas très utile.
-///  Pourquoi avoir fait cette fonction ? On a besoin de N et de contenu plus tard...
 Arbre::Arbre(const std::string& filename)
 {
     m_racine = NULL;
@@ -394,9 +388,6 @@ void Arbre::codage()
 
 //  q.6
 ///  Crée un string contenant le texte codé.
-///
-///  Il est mentionné dans le sujet que cette fonction renvoie une 'string&',        // TODO question
-///  mais comment est-ce possible ?
 const std::string* Arbre::codage(const char* s, int N, double& taux_compression)
 {
     //  'code' contiendra tout le texte de 's' codé.
