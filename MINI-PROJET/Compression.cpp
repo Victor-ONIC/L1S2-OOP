@@ -234,6 +234,7 @@ void Liste::inserer_les_caracteres(const char* s, int N)
     int T[256] = {0};
 
     //  Compter le nombre d'occurences de chaque caractères.
+    //  Ne fonctionne que pour les caractères ASCII.
     for (int i = 0; i < N; i++)
     {
         T[(int)s[i]]++;
@@ -454,9 +455,11 @@ const char* Arbre::compresser(const std::string* texte)
     }
 
     //  Si le nombre de caractères dans 'texte' n'est pas divisible par 8,
-    //  alors remplir les derniers bits avec une partie du plus long code.
-    //  Cela empêche qu'un caractère non désiré apparaisse lors de la 
-    //  décompression.
+    //  alors remplir les derniers bits avec une partie du plus long codage.
+    //
+    //  BUG
+    //  À savoir que si le texte à compresser est de petite taille, cette méthode
+    //  pourra quand même rajouter un caractère non désiré lors de la décompression.
     if (i % 8 != 0)
     {
         size_t max = 0;
@@ -471,9 +474,17 @@ const char* Arbre::compresser(const std::string* texte)
         }
 
         std::string val = m_codes[plus_grand_code];
-        int compteur = 0;
+        size_t compteur = 0;
         while (i % 8 != 0)
         {
+            //  Si jamais il y a encore des bits à remplir alors que tout le
+            //  code le plus long ait été ajouté, on réitère.
+            //  Cela signifie qu'il y aura un caractère non désiré à la décompression.
+            if (compteur == val.size())
+            {
+                compteur = 0;
+            }
+
             if (val[compteur] == '1')
             {
                 c |= 1 << (7 - (i % 8));
@@ -584,6 +595,8 @@ const std::string* Arbre::decodage(const std::string* code)
             s->push_back(parcours->m_char);
             parcours = m_racine;
         }
+
+        // Si on parcours l'arbre sans arriver à aucune racine, on ne fait rien.
     }
 
     return s;
