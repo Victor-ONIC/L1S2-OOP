@@ -44,3 +44,8 @@ exe:
 	@make --no-print-directory
 	@make --no-print-directory clean 
 	@echo "Build complete !"
+
+Wexe:
+	@mingw32-make --no-print-directory
+	@mingw32-make --no-print-directory cleanW
+	@echo "Build complete !"

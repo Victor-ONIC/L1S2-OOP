@@ -69,47 +69,40 @@ Noeud::Noeud(int effectif, Noeud* fg, Noeud* fd)
 ///  Destructeur.
 Noeud::~Noeud()
 {
-    if (m_fg != NULL)
-    {
-        delete m_fg;
-    }
-
-    if (m_fd != NULL)
-    {
-        delete m_fd;
-    }
+    if (m_fg != NULL) delete m_fg;
+    if (m_fd != NULL) delete m_fd;
 }
 
 ///  Remplir l'attribut 'm_codes' de la classe Arbre en parcourant chaque noeud.
 void Noeud::visiter(const char* T, int taille, std::string* codes)
 {
     //  Tableau à passer au noeud fils de gauche.
-    char codeg[20] = {0};
-    for (int i = 0; i < taille; i++)
+    char codeG[20] = {0};
+    for (int i = 0; i < taille; i++) 
     {
-        codeg[i] = T[i];
+        codeG[i] = T[i];
     }
 
     //  Tableau à passer au noeud fils de droite.
-    char coded[20] = {0};
-    for (int i = 0; i < taille; i++)
+    char codeD[20] = {0};
+    for (int i = 0; i < taille; i++) 
     {
-        coded[i] = T[i];
+        codeD[i] = T[i];
     }
 
     if (m_fg == NULL && m_fd == NULL)
     {
-        codes[(int)m_char] = codeg;
+        codes[static_cast<int>(m_char)] = codeG;
         return;
     }
 
     //  Le caractère '0' est ajouté en descendant l'arbre à gauche.
-    codeg[taille] = '0';
-    m_fg->visiter(codeg, taille + 1, codes);
+    codeG[taille] = '0';
+    m_fg->visiter(codeG, taille + 1, codes);
 
     //  Et le caractère '1' en passant à droite.
-    coded[taille] = '1';
-    m_fd->visiter(coded, taille + 1, codes);
+    codeD[taille] = '1';
+    m_fd->visiter(codeD, taille + 1, codes);
 
     //  Par exemple: racine->gauche->gauche->droite donne "001".
 }
@@ -120,35 +113,19 @@ void Noeud::ecrire_noeud(std::ofstream& of)
     char c;
     //  Les noeuds qui ne sont pas des feuilles ont '\0' comme caractère.
     //  Ils seront codés avec '|' dans le fichier de sauvegarde.
-    if (m_char == '\0')
-    {
-        c = '|';
-    }
-    else
-    {
-        c = m_char;
-    }
+    if (m_char == '\0')  c = '|';
+    else                 c = m_char;
 
     of << c;
 
-    if (m_fg != NULL)
-    {
-        m_fg->ecrire_noeud(of);
-    }
-
-    if (m_fd != NULL)
-    {
-        m_fd->ecrire_noeud(of);
-    }
+    if (m_fg != NULL) m_fg->ecrire_noeud(of);
+    if (m_fd != NULL) m_fd->ecrire_noeud(of);
 }
 
 ///  Crée un noeud avec le string sauvegardé lors de la compression.
 void Noeud::inserer(const std::string& s, size_t& ind)
 {
-    if (ind == s.length())
-    {
-        return;
-    }
+    if (ind == s.length()) return;
 
     m_char = s[ind];
 
@@ -188,7 +165,7 @@ const char* Liste::readfile(const std::string& filename, int& taille)
         return NULL;
     }
     fichier.seekg(0, std::ios::end);
-    taille = (int)fichier.tellg();
+    taille = static_cast<int>(fichier.tellg());
 
     char* s = new char[taille];
     fichier.seekg(0, std::ios::beg);
@@ -201,10 +178,7 @@ const char* Liste::readfile(const std::string& filename, int& taille)
 ///  Ajoute un noeud en début de liste.
 void Liste::inserer_tete(Noeud* n)
 {
-    if (m_tete == NULL)
-    {
-        m_tete = n;
-    }
+    if (m_tete == NULL) m_tete = n;
     else
     {
         n->m_suiv = m_tete;
@@ -216,10 +190,7 @@ void Liste::inserer_tete(Noeud* n)
 ///  Ajoute un noeud en début de liste.
 void Liste::inserer_tete(char c, int effectif)
 {
-    if (m_tete == NULL)
-    {
-        m_tete = new Noeud(c, effectif);
-    }
+    if (m_tete == NULL) m_tete = new Noeud(c, effectif);
     else
     {
         Noeud* n = new Noeud(c, effectif, m_tete);
@@ -237,7 +208,8 @@ void Liste::inserer_les_caracteres(const char* s, int N)
     //  Ne fonctionne que pour les caractères ASCII.
     for (int i = 0; i < N; i++)
     {
-        T[(int)s[i]]++;
+        int char_index = static_cast<int>(s[i]);
+        T[char_index]++;
     }
 
     //  Si le caractère est présent au moins une fois, l'ajouter à la liste.
@@ -245,7 +217,8 @@ void Liste::inserer_les_caracteres(const char* s, int N)
     {
         if (T[i] > 0)
         {
-            inserer_tete((char)i, T[i]);
+            char caractere = static_cast<char>(i);
+            inserer_tete(caractere, T[i]);
         }
     }
 }
@@ -254,10 +227,7 @@ void Liste::inserer_les_caracteres(const char* s, int N)
 ///  Retire le noeud avec le plus petit effectif et le renvoie.
 Noeud* Liste::supprimer_plus_petit()
 {
-    if (m_tete == NULL)
-    {
-        return NULL;
-    }
+    if (m_tete == NULL) return NULL;
 
     //  Trouver le noeud avec l'effectif le plus petit.
 
@@ -313,10 +283,7 @@ Arbre::Arbre()
 ///  Destructeur.
 Arbre::~Arbre()
 {
-    if (m_racine != NULL)
-    {
-        delete m_racine;
-    }
+    if (m_racine != NULL) delete m_racine;
 }
 
 //  q.4
@@ -381,10 +348,7 @@ void Arbre::codage()
 {
     char code[20] = {0};
     int size = 0;
-    if (m_racine != NULL)
-    {
-        m_racine->visiter(code, size, m_codes);
-    }
+    if (m_racine != NULL) m_racine->visiter(code, size, m_codes);
 }
 
 //  q.6
@@ -395,7 +359,8 @@ const std::string* Arbre::codage(const char* s, int N, double& taux_compression)
     std::string* code = new std::string;
     for (int i = 0; i < N; i++)
     {
-        code->append(m_codes[(int)s[i]]);
+        int char_index = static_cast<int>(s[i]);
+        code->append(m_codes[char_index]);
     }
 
     double taille_s = N * 8;
@@ -438,13 +403,8 @@ const char* Arbre::compresser(const std::string* texte)
         {
             //  S'il y a un '1' dans 'texte', on le rajoute dans 'c' à la
             //  bonne place.
-            //  i=0: mettre le 7e bit de 'c' à 1,
-            //  i=1: mettre le 6e bit de 'c' à 1,
-            //  ...
-            //  i=8: mettre le 7e bit de 'c' à 1 (ce n'est plus le même 'c'!)
-            //  ...
             //  
-            //  On utilise l'opération OU sur les bits de 'c' un à un.
+            //  On utilise l'opération OU sur les bits de 'c' deux à deux.
             //  exemple:
             //      11000000 => c
             //   OU 00001000 => valeur, ici 1 (00000001) avec ses bits décalés vers la gauche 3 fois (1 << 3).
@@ -479,16 +439,10 @@ const char* Arbre::compresser(const std::string* texte)
         {
             //  Si jamais il y a encore des bits à remplir alors que tout le
             //  code le plus long ait été ajouté, on réitère.
-            //  Cela signifie qu'il y aura un caractère non désiré à la décompression.
-            if (compteur == val.size())
-            {
-                compteur = 0;
-            }
+            //  Cela signifie qu'il y aura forcément un caractère non désiré à la décompression.
+            if (compteur == val.size()) compteur = 0;
 
-            if (val[compteur] == '1')
-            {
-                c |= 1 << (7 - (i % 8));
-            }
+            if (val[compteur] == '1') c |= 1 << (7 - (i % 8));
             compteur++;
             i++;
         }
@@ -503,10 +457,7 @@ const char* Arbre::compresser(const std::string* texte)
 void Arbre::ecrire_arbre(const std::string& filename)
 {
     std::ofstream of(filename);
-    if (m_racine != NULL)
-    {
-        m_racine->ecrire_noeud(of);
-    }
+    if (m_racine != NULL) m_racine->ecrire_noeud(of);
 }
 
 ///  Crée un arbre à partir de la chaîne de caractère sauvegardée lors de la compression.
@@ -538,20 +489,15 @@ const std::string* Arbre::decompresser(const char* texte, int N)
             //  Puis on utilise l'opération ET sur les bits avec le chiffre 1.
             //  exemple:
             //      00110110 => c (lire le 1er bit)       00011011 => c >> 1 (lire le 2e bit)
-            //   ET 00000001 => 1                         ET 00000001 => 1
+            //   ET 00000001 => 1                      ET 00000001 => 1
             //      --------                              --------
             //      00000000 => résultat                  00000001 => résultat
             //  Si le résultat est 1 (00000001), alors le nième bit était 1.
             //  Si le résultat est 0 (00000000), alors c'était 0.
             int val = (c >> (7 - j)) & 1;
-            if (val == 1)
-            {
-                s->push_back('1');
-            }
-            else
-            {
-                s->push_back('0');
-            }
+
+            if (val == 1)   s->push_back('1');
+            else            s->push_back('0');
         }
     }
 
@@ -573,16 +519,14 @@ const std::string* Arbre::decodage(const std::string* code)
         while (parcours->m_fg != NULL && parcours->m_fd != NULL && indice != size)
         {
             //  Tant qu'on est pas arrivé à une feuille de l'arbre de Huffmann...
-            if ((*code)[indice] == '0')
+            
+            if ((*code)[indice] == '0')  //  Si 0, on descend à gauche.
             {
-                //  S'il y a un '0' dans le code du caractère, on descend à
-                //  gauche dans l'arbre.
                 parcours = parcours->m_fg;
                 indice++;
             }
-            else
+            else  //  Si 1, on descend à droite.
             {
-                //  Et à droite s'il y a un '1'.
                 parcours = parcours->m_fd;
                 indice++;
             }

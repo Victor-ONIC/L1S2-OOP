@@ -110,7 +110,7 @@ int main(int argc, char** argv)
         }
 
         fichier_arbre.seekg(0, std::ios::end);
-        int taille1 = (int)fichier_arbre.tellg();
+        int taille1 = static_cast<int>(fichier_arbre.tellg());
 
         char* s = new char[taille1];
         fichier_arbre.seekg(0, std::ios::beg);
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
         }
 
         fichier.seekg(0, std::ios::end);
-        int taille2 = (int)fichier.tellg();
+        int taille2 = static_cast<int>(fichier.tellg());
 
         char* binary = new char[taille2];
         fichier.seekg(0, std::ios::beg);
