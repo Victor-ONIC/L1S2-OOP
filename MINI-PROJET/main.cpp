@@ -1,13 +1,15 @@
 /**
  * @file    main.cpp
  * @author  ONIC Victor (victor.onic@outlook.fr)
- * @date    01-05-2022
+ * @date    19-05-2022
  * 
  * Fichier contenant le point d'entrée du programme Compression.
  */
 
 #include <iostream>
-#include "Compression.hpp"
+#include "Noeud.hpp"
+#include "Liste.hpp"
+#include "Arbre.hpp"
 
 int main(int argc, char** argv)
 {
