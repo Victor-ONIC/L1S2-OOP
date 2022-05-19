@@ -90,6 +90,7 @@ void Noeud::visiter(const char* T, int taille, std::string* codes)
         codeD[i] = T[i];
     }
 
+    //  Une fois arrivé à une feuille, on a un codage valide.
     if (m_fg == NULL && m_fd == NULL)
     {
         codes[static_cast<int>(m_char)] = codeG;
@@ -230,7 +231,6 @@ Noeud* Liste::supprimer_plus_petit()
     if (m_tete == NULL) return NULL;
 
     //  Trouver le noeud avec l'effectif le plus petit.
-
     int effectif_min = m_tete->m_effectif;
     Noeud* min = m_tete;
 
@@ -329,13 +329,8 @@ Noeud* Arbre::construire_arbre(Liste& L)
         Noeud* min_2 = L.supprimer_plus_petit();
         int eff = min_1->m_effectif + min_2->m_effectif;
 
-        //  Création d'un noeud avec comme fils les deux noeuds avec les
-        //  effectifs les plus petits de la liste.
-        //  Son effectif à lui est la somme des effectifs de ses fils.
-        //  Son caractère est '\0'.
         Noeud* nouveau = new Noeud(eff, min_2, min_1);
 
-        //  On ajoute ce nouveau noeud en tête de la liste.
         L.inserer_tete(nouveau);
     }
     Noeud* n = L.m_tete;
@@ -375,15 +370,13 @@ const std::string* Arbre::codage(const char* s, int N, double& taux_compression)
 ///  Crée un tableau de char contenant les 1 et 0 du string 'texte'.
 const char* Arbre::compresser(const std::string* texte)
 {
-    //  Tous les caractères de 'texte' (des '0' et des '1') iront par paquets
-    //  de 8 dans T. Il faut un emplacement supplémentaire au cas-où le
+    //  Tous les caractères de 'texte' (des '0' et des '1') seront
+    //  retranscrit dans T par paquets de 8. 
+    //  Il faut un emplacement supplémentaire au cas-où le
     //  nombre de caractères n'est pas divisible par 8.
     char* T = new char[texte->length() / 8 + 1];
 
     //  Les bits de 'c' vont copier la chaine de caractères 'texte'.
-    //  exemple: les 8 premiers caractères de 'texte' sont 00101101.
-    //  alors, c = 0b00101101, soit 45.
-    //  Cela jusqu'à être arrivé à la fin de 'texte'.
     char c = 0b00000000;
 
     int j = 0;
@@ -401,15 +394,8 @@ const char* Arbre::compresser(const std::string* texte)
 
         if ((*texte)[i] == '1')
         {
-            //  S'il y a un '1' dans 'texte', on le rajoute dans 'c' à la
+            //  S'il y a un '1' dans 'texte', on le retranscrit dans 'c' à la
             //  bonne place.
-            //  
-            //  On utilise l'opération OU sur les bits de 'c' deux à deux.
-            //  exemple:
-            //      11000000 => c
-            //   OU 00001000 => valeur, ici 1 (00000001) avec ses bits décalés vers la gauche 3 fois (1 << 3).
-            //      --------
-            //    = 11001000 => résultat
             c |= 1 << (7 - (i % 8));
         }
     }
@@ -439,7 +425,7 @@ const char* Arbre::compresser(const std::string* texte)
         {
             //  Si jamais il y a encore des bits à remplir alors que tout le
             //  code le plus long ait été ajouté, on réitère.
-            //  Cela signifie qu'il y aura forcément un caractère non désiré à la décompression.
+            //  Cela signifie qu'il y aura forcément un caractère non désiré à la décompression !
             if (compteur == val.size()) compteur = 0;
 
             if (val[compteur] == '1') c |= 1 << (7 - (i % 8));
@@ -482,18 +468,9 @@ const std::string* Arbre::decompresser(const char* texte, int N)
         c = texte[i];
         for (int j = 0; j < 8; j++)
         {
-            //  Pour chaque char de 'texte', répéter 8 fois...
-
             //  Pour lire le nième bit de 'c', on va déplacer le bit tout
             //  à droite (bit de poids faible).
             //  Puis on utilise l'opération ET sur les bits avec le chiffre 1.
-            //  exemple:
-            //      00110110 => c (lire le 1er bit)       00011011 => c >> 1 (lire le 2e bit)
-            //   ET 00000001 => 1                      ET 00000001 => 1
-            //      --------                              --------
-            //      00000000 => résultat                  00000001 => résultat
-            //  Si le résultat est 1 (00000001), alors le nième bit était 1.
-            //  Si le résultat est 0 (00000000), alors c'était 0.
             int val = (c >> (7 - j)) & 1;
 
             if (val == 1)   s->push_back('1');

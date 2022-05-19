@@ -3,7 +3,7 @@
  * @author  ONIC Victor (victor.onic@outlook.fr)
  * @date    01-05-2022
  * 
- * Fichier header de Compression.cpp.
+ * Fichier entête de Compression.cpp.
  */
 
 #ifndef COMPRESSION_H
@@ -13,9 +13,9 @@
 #include <fstream>
 #include <string>
 
-/**
- *  Classe Noeud
- */
+
+
+///  Classe Noeud
 class Noeud
 {
 private:
@@ -43,9 +43,7 @@ public:
 
 
 
-/**
- *  Classe Liste
- */
+///  Classe Liste
 class Liste
 {
 private:
@@ -65,9 +63,7 @@ public:
 
 
 
-/**
- *  Classe Arbre
- */
+///  Classe Arbre
 class Arbre
 {
 private:
@@ -92,4 +88,4 @@ public:
     const std::string* decodage(const std::string* code);
 };
 
-#endif
+#endif  //  COMPRESSION_H
